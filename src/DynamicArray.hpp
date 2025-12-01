@@ -12,7 +12,7 @@ public:
     using value_type = T;
     using size_type  = std::size_t;
     DynamicArray()
-        :data_(nullptr), size_(0), capacity_(0);                     //Default Constructor    
+        :data_(nullptr), size_(0), capacity_(0) {}                     //Default Constructor    
     explicit DynamicArray(size_type n)
         :data_(nullptr), size_(0), capacity_(0)
     {
