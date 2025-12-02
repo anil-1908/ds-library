@@ -49,7 +49,7 @@ public:
         }
         catch(...){
             for(size_type j = 0; j < i; ++j) alloc_.destroy(new_data + j);
-            alloc_.deallocate(new_data, capacity_);
+            alloc_.deallocate(new_data, new_cap);
             throw;
         }
 
@@ -60,26 +60,22 @@ public:
     }
 
     void resize(size_type new_size){
-        if(new_size >= capacity_) {
-            size_type new_cap = new_size * 2;
-            reserve(new_cap);
-            for(size_type i=size_; i < new_size; i++){
-                alloc_.construct(data_ + i, T());
-             }
-             size_ = new_size;
-        }
-        else{
-            if(new_size > size_){
-                for(size_type i=size_; i < new_size; i++){
-                    alloc_.construct(data_ + i, T());
-                }
+        if(size_ > new_size){
+            for(size_type i = new_size; i < size_; i++) {
+                alloc_.destroy(data_ + i);
             }
-            else if(new_size < size_){
-                for(size_type i = size_-1; i >= new_size; --i) {
-                    alloc_.destroy(data_ + i);
-                }
-            }
+            size_ = new_size;
+            maybe_shrink();
         }
+
+        if(new_size > capacity_){
+            reserve(std::max(new_size, capacity_*2));
+        }
+
+        for(size_type i = size_; i < new_size; i++){
+            alloc_.construct(data_+i, T());
+        }
+        size_ = new_size;
     }
     size_type size() const noexcept{
         return size_;

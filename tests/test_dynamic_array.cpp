@@ -32,12 +32,27 @@ int main() {
     assert(b.size() == 1 && b[0] == 17);
 
     //Tests for Resize function
-    DynamicArray<int> c;
-    for(size_t i = 0; i < 1000; ++i) c.push_back(i);
-    c.resize(500);
-    c.resize(1500);
-    for(size_t i = 0; i < 500; ++i) assert(c[i] == i);
-    assert(c.size() == 1500);
-    
+    //Shrinking correctness
+    DynamicArray<int> x;
+    for(int i = 0; i < 1000; i++) x.push_back(i);
+
+    x.resize(200);
+    for(int i = 0; i < 200; ++i) assert(x[i] == i);  
+
+    //Grow Correctness
+
+    x.resize(1200);
+    for(int i = 0; i < 200; ++i) assert(x[i] == i);
+    for (int i = 200; i <1200 ; ++i) assert(x[i] == 0);
+
+    //Grow shrink cycles
+    x.resize(500);
+    x.resize(50);
+    x.resize(300);
+
+    assert(x.size() == 300);
+    for(size_t i = 0; i < 50; ++i) assert(x[i] == i);
+
+
     std::cout << "Basic tests passed.\n";
 }
