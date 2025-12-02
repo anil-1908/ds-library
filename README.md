@@ -1,46 +1,50 @@
-# ds-library
+# **ds-library**
 Library of datastructures
 
 A lightweight collection of hand-implemented data structures built over basic memory primitives.  
 The goal of this project is to understand how fundamental containers work internally by building them from scratch, testing them thoroughly, and benchmarking their performance.
 
+**Status:** v0.1 stable — passes tests and benchmarks; new features under development.
+
 This library will grow over time as more data structures are added.
 
 ---
 
-## 1. Dynamic Array
-
-The first data structure implemented in this library is a simple `DynamicArray<T>`.
+## **v0.1 - DynamicArray**
+`DynamicArray<T>` is a minimal vector-like container built from scratch to
+understand memory allocation, growth policies, move semantics, and exception
+safety in contiguous storage containers.
 
 ### Features
-
 - Amortized **O(1)** `push_back`
-- **O(1)** random access using `operator[]`
-- **O(1)** `pop_back`
-- Automatic resizing using capacity‐doubling strategy
-- Minimal, header-only implementation
-- Tests + micro-benchmarks included
+- **O(1)** random access via `operator[]`
+- Automatic growth using capacity-doubling
+- Shrink policy: capacity halves when `size <= capacity/4`
+- Header-only, template-based design
+- Strong exception safety during reallocation
+- Move-aware (`std::move_if_noexcept`)
+- Invariants: `capacity == 0 <=> data == nullptr`
 
 ---
 
-## **Build / Test / Benchmark Instructions**
-*(Exact commands used in development.)*
+### **Build & run tests:**
+```bash
+g++ -std=c++17 -O0 -g tests/test_dynamic_array.cpp -I src -o tests/test_dynamic_array
+./tests/test_dynamic_array  # prints: Basic tests passed.
+```
 
-### **Compile tests (debug mode)**
+### **Benchmark (optimized)**:
 ```bash
-g++ -std=c++17 -O0 -g tests/test_dynamic_array.cpp  -o tests/test_dynamic_array
+g++ -std=c++17 -O2 bench/bench_dynamic_array.cpp -I src -o bench/bench_dynamic_array
+./bench/bench_dynamic_array  # sample output: push_back 1000000 ints took 1ms / read 1000000 ints took 2ms
 ```
-### **run tests (asserts enabled)**
-./tests/test_dynamic_array
 
-### **compile benchmark (optimized)**
-```bash
-g++ -std=c++17 -O2 bench/bench_dynamic_array.cpp  -o bench/bench_dynamic_array
-```
-### **run benchmark**
-```bash
-./bench/bench_dynamic_array
-```
+### **Notes:**
+- Public API: push_back, pop_back, operator[], size(), capacity(), reserve(), resize(), clear().
+- Implementation detail: strong exception-safety on shrink; template definitions in header.
+- Template-based container: all method definitions are header-only (no .cpp needed for templates).
+- Invariants: `capacity == 0 <=> data == nullptr`.
+- Memory model: all allocations performed via `std::allocator<T>`.
 
 ---
 
