@@ -14,7 +14,7 @@ public:
     DynamicArray()
         :data_(nullptr), size_(0), capacity_(0) {}                     //Default Constructor    
     
-        explicit DynamicArray(size_type n)
+    explicit DynamicArray(size_type n)
         :data_(nullptr), size_(0), capacity_(0)
     {
         if(n) reserve(n);
@@ -41,15 +41,46 @@ public:
         if (new_cap <= capacity_) return;
          T* new_data = alloc_.allocate(new_cap);
         // move/construct existing elements
-        for (size_type i = 0; i < size_; ++i) {
+        size_type i = 0;
+        try{
+            for (; i < size_; ++i) {
             alloc_.construct(new_data + i, std::move_if_noexcept(data_[i]));
-            alloc_.destroy(data_ + i);
+            }
         }
+        catch(...){
+            for(size_type j = 0; j < i; ++j) alloc_.destroy(new_data + j);
+            alloc_.deallocate(new_data, capacity_);
+            throw;
+        }
+
+        for(size_type j=0; j < size_; j++) alloc_.destroy(data_+j);  
         if (data_) alloc_.deallocate(data_, capacity_);
         data_ = new_data;
         capacity_ = new_cap;
     }
 
+    void resize(size_type new_size){
+        if(new_size >= capacity_) {
+            size_type new_cap = new_size * 2;
+            reserve(new_cap);
+            for(size_type i=size_; i < new_size; i++){
+                alloc_.construct(data_ + i, T());
+             }
+             size_ = new_size;
+        }
+        else{
+            if(new_size > size_){
+                for(size_type i=size_; i < new_size; i++){
+                    alloc_.construct(data_ + i, T());
+                }
+            }
+            else if(new_size < size_){
+                for(size_type i = size_-1; i >= new_size; --i) {
+                    alloc_.destroy(data_ + i);
+                }
+            }
+        }
+    }
     size_type size() const noexcept{
         return size_;
     }
@@ -89,7 +120,7 @@ public:
         if (size_ > capacity_ / 4) return;       // not enough slack to shrink
 
         size_type new_cap = size_== 0 ? 1: size_ * 2; 
-        
+
         T* new_data = alloc_.allocate(new_cap);
         size_type i = 0;
         try{
@@ -110,7 +141,8 @@ public:
 
         data_ = new_data;
         capacity_ = new_cap;
-    }                    
+    }
+
     T& operator[](size_type index){
         assert(index < size_ && "index out of bound");
         return data_[index];

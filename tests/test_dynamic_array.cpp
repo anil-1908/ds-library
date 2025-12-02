@@ -31,5 +31,13 @@ int main() {
     b.push_back(17);
     assert(b.size() == 1 && b[0] == 17);
 
+    //Tests for Resize function
+    DynamicArray<int> c;
+    for(size_t i = 0; i < 1000; ++i) c.push_back(i);
+    c.resize(500);
+    c.resize(1500);
+    for(size_t i = 0; i < 500; ++i) assert(c[i] == i);
+    assert(c.size() == 1500);
+    
     std::cout << "Basic tests passed.\n";
 }
