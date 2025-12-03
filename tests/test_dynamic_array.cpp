@@ -1,6 +1,7 @@
 #include "../src/dynamic_array.hpp"
 #include <cassert>
 #include <iostream>
+#include <numeric>
 
 struct Counter {
     static int constructions;
@@ -111,6 +112,24 @@ int main() {
         //sanity
         assert(Counter::constructions > 0);
         assert(Counter::destructions > 0);
+    }
+
+    //iterator tests
+    {
+        DynamicArray<int> arr;
+        for(int i=0; i<10; ++i) arr.push_back(i);
+
+        int sum = 0;
+        for(auto it: arr) sum += it;
+        assert(sum == 45);
+
+        //STL Compatability test
+        assert(std::accumulate(arr.begin(), arr.end(), 0) == 45);
+
+        //Mutating through range
+        for(auto& it : arr) it*=2;  
+        for(int i=0; i < 10; i++) assert(arr[i] == i*2);
+
     }
 
     std::cout << "Basic tests passed.\n";

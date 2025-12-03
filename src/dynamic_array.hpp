@@ -233,6 +233,14 @@ public:
         return data_[index];
     }       
 
+    T* begin() noexcept { return data_; }
+    T* end() noexcept{ return data_ + size_; }
+
+    const T* begin() const noexcept { return data_; }
+    const T* end() const noexcept{ return data_ + size_; }
+    T* data() noexcept { return data_; }
+    const T* data() const noexcept { return data_; }
+    
 private:
     std::allocator<T> alloc_;
     T* data_;
