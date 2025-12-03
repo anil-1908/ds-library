@@ -132,7 +132,7 @@ int main() {
 
     }
 
-    //insert tests
+    //insert tests 
     {
         DynamicArray<int> a;
         for (int i = 0; i < 5; i++) a.push_back(i);   // [0,1,2,3,4]
@@ -158,5 +158,30 @@ int main() {
         assert(a[3] == 222);
         assert(a[4] == 111);
     }
+
+    //insert tests for heavy types which uses rvalue
+    {
+    DynamicArray<Counter> arr;
+    arr.reserve(5);
+    arr.emplace_back(1);
+    arr.emplace_back(2);
+    arr.emplace_back(3);
+
+    Counter x(99);
+    int old_moves = Counter::moves;
+    int old_copies = Counter::copies;
+
+    arr.insert(1, std::move(x));   // rvalue overload
+
+    // inserted value must be 99
+    assert(arr[1].val == 99);
+
+    // no copies should happen when inserting rvalue
+    assert(Counter::copies == old_copies);
+
+    // some moves likely happened due to shifting
+    assert(Counter::moves > old_moves);
+}
+
     std::cout << "Basic tests passed.\n";
 }
