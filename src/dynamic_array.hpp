@@ -263,6 +263,7 @@ public:
             alloc_.construct(data_ + i, std::move_if_noexcept(data_[i+1]));
         }
         --size_;
+        maybe_shrink();
     }
     T* begin() noexcept { return data_; }
     T* end() noexcept{ return data_ + size_; }
