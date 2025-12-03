@@ -24,6 +24,49 @@ public:
         size_ = n;
     }
 
+    explicit DynamicArray(size_type n, const T& value) 
+        :data_(nullptr), size_(0), capacity_(0)
+        {
+            if(n) reserve(n);
+            for(size_type i=0; i < n; i++){
+                alloc_.construct(data_+i, value);
+            }
+            size_ = n;
+        }
+
+    //copy ctor
+    DynamicArray(const DynamicArray<T>& other)
+        :data_(nullptr), size_(0), capacity_(0)
+    {   
+        if(other.size_){
+           T* new_data = alloc_.allocate(other.size_);
+           size_type i = 0;
+           try{
+                for(;i < other.size_; i++){
+                    alloc_.construct(new_data + i, other[i]);
+                }
+           }
+           catch(...){
+                for(size_type j = 0; j < i; j++){
+                    alloc_.destroy(new_data + j);
+                }
+                alloc_.deallocate(new_data, other.size_);
+           }
+           data_ = new_data;
+           size_ = other.size_;
+           capacity_ = other.size_;
+        }
+    }
+
+    //move ctor
+    DynamicArray(DynamicArray<T>&& other) noexcept
+        :alloc_(std::move(other.alloc_)), data_(other.data_), size_(other.size_), capacity_(other.capacity_)
+    {
+        other.data_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+    }
+    
     ~DynamicArray(){
         //destruct constructed elements
         for(size_type i=0; i < size_; i++){
@@ -37,6 +80,40 @@ public:
         capacity_ = 0;
     }
 
+    //Assignment (copy)
+     DynamicArray& operator=(const DynamicArray<T>& other){
+        if(this == &other) return *this;
+        DynamicArray<T> temp(other);
+        swap(temp);
+        return *this;
+     }
+
+     //Assignment Move
+    DynamicArray& operator=(DynamicArray<T>&& other) noexcept{
+        if(this == &other) return *this;
+        if(data_){
+            for(size_type i = 0; i < size_; i++){
+                alloc_.destroy(data_+i);
+            }
+            alloc_.deallocate(data_, capacity_);
+        }
+        alloc_ = std::move(other.alloc_);
+        data_ = other.data_;
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        other.data_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+        return *this;
+    }     
+
+    void swap(DynamicArray<T>& other) noexcept{
+        using std::swap;
+        swap(alloc_, other.alloc_);
+        swap(data_, other.data_);
+        swap(size_, other.size_);
+        swap(capacity_, other.capacity_);
+    }
     void reserve(size_type new_cap) {
         if (new_cap <= capacity_) return;
          T* new_data = alloc_.allocate(new_cap);

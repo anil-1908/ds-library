@@ -53,6 +53,29 @@ int main() {
     assert(x.size() == 300);
     for(size_t i = 0; i < 50; ++i) assert(x[i] == i);
 
+    // Tests for Copy ctor
+    DynamicArray<int> y(x);
+    assert(x.size() == y.size());
+    for(size_t i = 0; i < x.size(); ++i) assert(x[i] == y[i]);
+    
+    //Tests for Move ctor
+    DynamicArray<int> z(std::move(y));
+    assert(y.size() == 0);
+    assert(z.size() == x.size());
+    for(size_t i = 0; i < x.size(); ++i) assert(x[i] == z[i]);
+
+    //Tests for assign copy 
+    DynamicArray<int> w;
+    w = z;
+    assert(w.size() == z.size());
+    for(size_t i = 0; i < z.size(); ++i) assert(z[i] == w[i]);
+
+    //Tests for assign move 
+    DynamicArray<int> v;
+    v = std::move(w);
+    assert(w.size() == 0);
+    assert(v.size() == z.size());
+    for(size_t i = 0; i < z.size(); ++i) assert(z[i] == v[i]);
 
     std::cout << "Basic tests passed.\n";
 }
