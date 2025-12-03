@@ -196,20 +196,23 @@ public:
 
     //lvalue
     void insert(size_t index, const T& value){
-        assert(index < size_  && index >= 0 && "Index out of bound");
+        assert(index <= size_  && index >= 0 && "Index out of bound");
         ensure_capacity_for_push();
         for(int i = size_ ;i > index; --i){
             alloc_.construct(data_ + i, std::move_if_noexcept(data_[i-1]));
+            alloc_.destroy(data_+ (i - 1));
         }
         alloc_.construct(data_+index, value);
+        ++size_;
     }
 
     //rvalue
     void insert(size_t index,  T&& value){
-        assert(index < size_  && index >= 0 && "Index out of bound");
+        assert(index <= size_  && index >= 0 && "Index out of bound");
         ensure_capacity_for_push();
         for(int i = size_ ;i > index; --i){
             alloc_.construct(data_ + i, std::move_if_noexcept(data_[i-1]));
+            alloc_.destroy(data_+ (i - 1));
         }
         alloc_.construct(data_+index, std::move(value));
         ++size_;

@@ -134,11 +134,29 @@ int main() {
 
     //insert tests
     {
-        DynamicArray<int> arr;
-        for(int i = 0; i < 5; ++i) arr.push_back(i);
-        arr.insert(2, 10);
-        assert(arr[2] == 10);
-        assert(arr.size() == 6);
+        DynamicArray<int> a;
+        for (int i = 0; i < 5; i++) a.push_back(i);   // [0,1,2,3,4]
+
+        // middle
+        a.insert(2, 99);     // [0,1,99,2,3,4]
+        assert(a.size() == 6);
+        assert(a[2] == 99);
+        assert(a[3] == 2);
+
+        // front
+        a.insert(0, -1);     // [-1,0,1,99,2,3,4]
+        assert(a[0] == -1);
+        assert(a.size() == 7);
+
+        // back
+        a.insert(a.size(), 500); 
+        assert(a[a.size()-1] == 500);
+
+        // multiple inserts
+        a.insert(3, 111);
+        a.insert(3, 222);
+        assert(a[3] == 222);
+        assert(a[4] == 111);
     }
     std::cout << "Basic tests passed.\n";
 }
