@@ -258,11 +258,16 @@ public:
 
     void erase(int index){
         assert(index < size_  && index >= 0 && "Index out of bound");
-        alloc_.destroy(data_ + index);
-        for(size_t i = index; i < size_ - 1; ++i){
+        
+       // shift everything left
+        for (size_type i = index; i + 1 < size_; ++i) {
+            alloc_.destroy(data_ + i);
             alloc_.construct(data_ + i, std::move_if_noexcept(data_[i + 1]));
-            alloc_.destroy(data_ + (i + 1));
         }
+
+        // destroy old last element
+        alloc_.destroy(data_ + (size_ - 1));
+
         --size_;
         maybe_shrink();
     }
