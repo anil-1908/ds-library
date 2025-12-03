@@ -180,6 +180,13 @@ public:
         ++size_;
     }
 
+    template <typename... Args>
+    void emplace_back(Args&&... args){
+        ensure_capacity_for_push();
+        alloc_.construct(data_+size_, std::forward<Args>(args)...);
+        ++size_;
+    }
+
     void pop_back(){
         assert(size_ > 0 && "Pop back on empty DynamicArray");
         --size_;

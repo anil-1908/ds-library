@@ -2,6 +2,23 @@
 #include <cassert>
 #include <iostream>
 
+struct Counter {
+    static int constructions;
+    static int destructions;
+    static int copies;
+    static int moves;
+    int val;
+    Counter(int v = 0) : val(v) {++constructions;}
+    Counter(const Counter& o): val(o.val) {++constructions; ++copies;}
+    Counter(Counter&& o) noexcept : val(o.val) {++constructions; ++moves; ++constructions; o.val = -1;}
+    ~Counter() {++destructions;}
+    };
+
+    int Counter::constructions = 0;
+    int Counter::destructions = 0;
+    int Counter::copies = 0;
+    int Counter::moves = 0;
+
 int main() {
     DynamicArray<int> a;
     a.push_back(10);
@@ -76,6 +93,25 @@ int main() {
     assert(w.size() == 0);
     assert(v.size() == z.size());
     for(size_t i = 0; i < z.size(); ++i) assert(z[i] == v[i]);
+
+    //non-trivial tests
+    {
+        Counter::constructions = Counter::destructions = Counter::copies = Counter::moves = 0;
+        DynamicArray<Counter> arr;
+        arr.reserve(10);
+        arr.emplace_back(1);
+        arr.emplace_back(2);
+        arr.push_back(Counter(3));
+        assert(arr.size() == 3);
+        //triggers moves by resizing to grow and shrink
+        arr.resize(34);
+        arr.resize(2);
+        assert(arr[0].val == 1);
+        assert(arr[1].val == 2);
+        //sanity
+        assert(Counter::constructions > 0);
+        assert(Counter::destructions > 0);
+    }
 
     std::cout << "Basic tests passed.\n";
 }
