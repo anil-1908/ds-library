@@ -181,7 +181,24 @@ int main() {
 
     // some moves likely happened due to shifting
     assert(Counter::moves > old_moves);
-}
+    }
+
+    //tests for erase
+    {
+    DynamicArray<int> a;
+        for (int i = 0; i < 6; ++i) a.push_back(i); // [0,1,2,3,4,5]
+
+        a.erase(2); // remove '2' -> [0,1,3,4,5]
+        assert(a.size() == 5);
+        assert(a[0] == 0 && a[1] == 1 && a[2] == 3 && a[3] == 4 && a[4] == 5);
+
+        a.erase(0); // remove front -> [1,3,4,5]
+        assert(a[0] == 1 && a.size() == 4);
+
+        a.erase(a.size() - 1); // remove back -> [1,3,4]
+        assert(a[a.size()-1] == 4);
+    }
+
 
     std::cout << "Basic tests passed.\n";
 }

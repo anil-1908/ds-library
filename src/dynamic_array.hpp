@@ -256,6 +256,14 @@ public:
         return data_[index];
     }       
 
+    void erase(int index){
+        assert(index <= size_  && index >= 0 && "Index out of bound");
+        for(size_t i = index; i < size_ - 1; ++i){
+            alloc_.destroy(data_ + i);
+            alloc_.construct(data_ + i, std::move_if_noexcept(data_[i+1]));
+        }
+        --size_;
+    }
     T* begin() noexcept { return data_; }
     T* end() noexcept{ return data_ + size_; }
 
