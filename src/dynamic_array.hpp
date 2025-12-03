@@ -194,6 +194,26 @@ public:
         maybe_shrink();
     }
 
+    //lvalue
+    void insert(size_t index, const T& value){
+        assert(index < size_  && index >= 0 && "Index out of bound");
+        ensure_capacity_for_push();
+        for(int i = size_ ;i > index; --i){
+            alloc_.construct(data_ + i, std::move_if_noexcept(data_[i-1]));
+        }
+        alloc_.construct(data_+index, value);
+    }
+
+    //rvalue
+    void insert(size_t index,  T&& value){
+        assert(index < size_  && index >= 0 && "Index out of bound");
+        ensure_capacity_for_push();
+        for(int i = size_ ;i > index; --i){
+            alloc_.construct(data_ + i, std::move_if_noexcept(data_[i-1]));
+        }
+        alloc_.construct(data_+index, std::move(value));
+        ++size_;
+    }
     // shrink-to-policy: when size_ <= capacity_/4, shrink to max(1, size_*2)
     void maybe_shrink(){
         if (capacity_ == 0) return;              // nothing to do

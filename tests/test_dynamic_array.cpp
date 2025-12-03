@@ -132,5 +132,13 @@ int main() {
 
     }
 
+    //insert tests
+    {
+        DynamicArray<int> arr;
+        for(int i = 0; i < 5; ++i) arr.push_back(i);
+        arr.insert(2, 10);
+        assert(arr[2] == 10);
+        assert(arr.size() == 6);
+    }
     std::cout << "Basic tests passed.\n";
 }
