@@ -11,7 +11,7 @@ struct Counter {
     int val;
     Counter(int v = 0) : val(v) {++constructions;}
     Counter(const Counter& o): val(o.val) {++constructions; ++copies;}
-    Counter(Counter&& o) noexcept : val(o.val) {++constructions; ++moves; ++constructions; o.val = -1;}
+    Counter(Counter&& o) noexcept : val(o.val) {++moves; ++constructions; o.val = -1;}
     ~Counter() {++destructions;}
     };
 

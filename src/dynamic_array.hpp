@@ -1,3 +1,5 @@
+#ifndef DYNAMIC_ARRAY_HPP
+#define DYNAMIC_ARRAY_HPP
 
 #include <iostream>
 #include <memory>
@@ -304,3 +306,5 @@ private:
         }
     }
 };
+
+#endif /* DYNAMIC_ARRAY_HPP */
