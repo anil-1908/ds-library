@@ -18,6 +18,9 @@ safety in contiguous storage containers.
 ### Features
 - Amortized **O(1)** `push_back`
 - Amortized **O(1)** `emplace_back`
+- Amortized **O(N)** `Insert`
+- Amortize  **O(N)** `erase`
+- iterator capabillities 
 - **O(1)** random access via `operator[]`
 - Automatic growth using capacity-doubling
 - Shrink policy: capacity halves when `size <= capacity/4`
@@ -41,7 +44,7 @@ g++ -std=c++17 -O2 bench/bench_dynamic_array.cpp -I src -o bench/bench_dynamic_a
 ```
 
 ### **Notes:**
-- Public API: push_back, emplace_back, pop_back, operator[], size(), capacity(), reserve(), resize(), clear().
+- Public API: push_back, emplace_back, pop_back, insert, erase, operator[], size(), capacity(), reserve(), resize(), clear().
 - Implementation detail: strong exception-safety on shrink; template definitions in header.
 - Template-based container: all method definitions are header-only (no .cpp needed for templates).
 - Invariants: `capacity == 0 <=> data == nullptr`.

@@ -199,6 +199,14 @@ int main() {
         assert(a[a.size()-1] == 4);
     }
 
+    //tests for clear
+    {
+        DynamicArray<int> arr;
+        for(int i = 0; i < 10; ++i) arr.push_back(i);
+        arr.clear(); // removes all elements
+        assert(arr.size() == 0);
+    }
+
 
     std::cout << "Basic tests passed.\n";
 }

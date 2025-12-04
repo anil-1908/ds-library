@@ -271,6 +271,14 @@ public:
         --size_;
         maybe_shrink();
     }
+   
+    void clear(){
+        for (size_type i = 0; i < size_; ++i)
+        {
+           alloc_.destroy(data_+i);
+        }
+        size_ = 0;
+    }
     T* begin() noexcept { return data_; }
     T* end() noexcept{ return data_ + size_; }
 
