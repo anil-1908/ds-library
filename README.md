@@ -4,7 +4,7 @@ Library of datastructures
 A lightweight collection of hand-implemented data structures built over basic memory primitives.  
 The goal of this project is to understand how fundamental containers work internally by building them from scratch, testing them thoroughly, and benchmarking their performance.
 
-**Status:** v0.1 stable — passes tests and benchmarks; new features under development.
+**Status:** v0.2 - Under construction.
 
 This library will grow over time as more data structures are added.
 
@@ -88,5 +88,9 @@ No meaningful difference — trivial types are **memory-bandwidth-bound**, so `p
 - creating temporary objects  
 - extra move operations  
 - extra destructor calls  
+
+---
+
+## **v0.2 - Linked List**
 
 
