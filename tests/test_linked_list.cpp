@@ -66,6 +66,75 @@ int main(){
     // after L is out of scope, destructors should have run
     assert(Counter::destructions >= Counter::constructions);
 }
+
+// LinkedList pop tests
+{
+    LinkedList<int> L;
+    L.push_back(1);
+    L.push_back(2); // list: [1,2]
+    assert(L.size() == 2);
+
+    // pop_front
+    L.pop_front();   // now [2]
+    assert(L.size() == 1);
+    assert(L.head() != nullptr && L.head()->data == 2);
+    assert(L.head() == L.head()); // trivial check to ensure valid pointer
+
+    // pop_back (now removes the last element)
+    L.pop_back();    // now []
+    assert(L.size() == 0);
+    assert(L.head() == nullptr);
+
+    // popping from empty should assert: (we check behavior manually/commented)
+    // Uncommenting the following lines should trigger assertion (intended)
+    // L.pop_front();
+    // L.pop_back();
+}
+
+// chain of operations
+{
+    LinkedList<int> L;
+    L.push_back(10);
+    L.push_back(20);
+    L.push_front(5); // [5,10,20]
+    assert(L.size() == 3);
+
+    L.pop_back();    // [5,10]
+    assert(L.size() == 2);
+    int expected_arr[] = {5, 10};
+    int idx = 0;
+    for (auto n = L.head(); n; n = n->next) {
+        assert(n->data == expected_arr[idx++]);
+    }
+    assert(idx == 2);
+
+    L.pop_front();   // [10]
+    assert(L.size() == 1);
+    assert(L.head()->data == 10);
+
+    L.pop_back();    // []
+    assert(L.size() == 0);
+    assert(L.head() == nullptr);
+}
+
+// Non-trivial lifetime check with Counter
+{
+    Counter::constructions = Counter::destructions = Counter::copies = Counter::moves = 0;
+    {
+        LinkedList<Counter> L;
+        L.push_back(Counter(1));
+        L.push_back(Counter(2));
+        L.push_back(Counter(3));
+        assert(L.size() == 3);
+
+        L.pop_front(); // removes 1
+        L.pop_back();  // removes 3
+        assert(L.size() == 1);
+    }
+    // after L is destroyed, at least constructions==destructions
+    assert(Counter::destructions >= Counter::constructions);
+}
+
 std::cout << "LinkedList tests passed.\n";
 
 }

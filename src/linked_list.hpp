@@ -69,6 +69,33 @@ struct Node{
         size_ = 0;
     }
 
+    void pop_front(){
+        assert(size_ != 0 && "pop_front() on empty list");
+        Node* temp = head_;
+        head_ = head_ -> next;
+        delete temp;
+        --size_;
+        if(size_ == 0) tail_ = nullptr;
+    }
+
+    void pop_back(){
+        assert(size_ != 0 && "pop_back on empty list");
+        if(size_ == 1){
+            delete tail_;
+            head_ = tail_ = nullptr;
+            size_ = 0;
+            return;
+        }
+        Node* temp = head_;
+        while(temp -> next != tail_){
+            temp = temp -> next;
+        }
+        temp -> next = nullptr;
+        delete tail_;
+        tail_ = temp;
+        --size_;
+    }
+
     Node* head() noexcept {return head_;}
     const Node* head() const noexcept { return head_;}
 
