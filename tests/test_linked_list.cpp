@@ -135,6 +135,34 @@ int main(){
     assert(Counter::destructions >= Counter::constructions);
 }
 
+// tests for insert 
+{
+    //insert into middle
+    LinkedList<int> L;
+    L.push_back(1);
+    L.push_back(2);
+    L.push_back(3); // 1 2 3
+
+    L.insert_at(1, 10);
+    assert(L.size() == 4);
+    int cur = 0;
+    LinkedList<int>::Node* temp = L.head();
+    while(cur<1){
+        temp = temp->next;
+        cur++;
+    }
+    assert(temp->data == 10);
+
+    L.insert_at(0, 99);
+    assert(L.size() == 5);
+    assert(L.head() -> data == 99);
+
+    L.insert_at(5,77);
+    assert(L.size() == 6);
+    assert(L.tail()->data == 77);
+
+}
+
 std::cout << "LinkedList tests passed.\n";
 
 }

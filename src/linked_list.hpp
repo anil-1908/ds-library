@@ -16,7 +16,8 @@ struct Node{
     template <typename... Args>
     Node(Args&&... args) noexcept : data(std::forward<Args>(args)...), next(nullptr) {}
 };
-
+    
+    using size_type = std::size_t;
     LinkedList(): head_{nullptr}, tail_{nullptr}, size_{0}{}
     ~LinkedList(){clear();}
 
@@ -96,8 +97,62 @@ struct Node{
         --size_;
     }
 
+    void insert_at(size_type index, const T& value){
+        assert(index <= size_ && index >= 0 && "Index out of bound");
+
+        if(index == 0) {
+            push_front(value);
+             return;
+        }
+
+        if(index == size_) {
+            push_back(value);
+            return;
+        }
+
+        Node* cur = head_;
+        size_type cur_index = 0;
+
+        while(cur_index < index-1){
+            cur = cur -> next;
+            index++;
+        }
+
+        Node* temp = new Node(value);
+        temp -> next = cur -> next;
+        cur -> next = temp;
+        ++size_;
+    }
+
+    void insert_at(size_type index, T&& value){
+        assert(index <= size_ && index >= 0 && "Index out of bound");
+
+        if(index == 0) {
+            push_front(std::move(value));
+             return;
+        }
+
+        if(index == size_) {
+            push_back(std::move(value));
+            return;
+        }
+
+        Node* cur = head_;
+        for (size_type i = 0; i < index - 1; ++i) {
+            cur = cur->next;
+        }
+
+        Node* temp = new Node(std::move(value));
+        temp -> next = cur -> next;
+        cur -> next = temp;
+        ++size_;
+    }
+
     Node* head() noexcept {return head_;}
     const Node* head() const noexcept { return head_;}
+    
+    Node* tail() noexcept {return tail_;}
+    const Node* tail() const noexcept { return tail_;}
 
 
 private:
