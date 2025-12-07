@@ -38,6 +38,63 @@ int main(){
     assert(L.head() == nullptr);
 }
 
+// copy ctor, move ctor, copy and move assignments
+{
+    LinkedList<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    LinkedList<int> b(a);
+    assert(b.size() == 3);
+    assert(b.head()->data == 1);
+    assert(b.head()->next->data == 2);
+    assert(a.head() != b.head());  // deep copy
+
+    LinkedList<int> c(std::move(b));//move ctor
+    assert(c.size() == 3);
+    assert(b.size() == 0);
+    assert(b.head() == nullptr);
+
+    LinkedList<int> d; //copy assignment 
+    d.push_back(10);
+    d = c;
+    assert(d.size() == c.size());
+
+    LinkedList<int> e;
+    e = std::move(c);
+    assert(e.size() == 3);
+    assert(c.size() == 0);
+
+}
+
+
+//Deep-copy test with non-trivial type (Counter)
+{
+    Counter::constructions = Counter::destructions = Counter::copies = Counter::moves = 0;
+    {
+        LinkedList<Counter> a;
+        a.push_back(Counter(5));
+        a.push_back(Counter(6));
+        LinkedList<Counter> b(a);
+        assert(b.size() == 2);
+        // ensure deep copy: heads not same pointer
+        assert(a.head() != b.head());
+    }
+    // after scope all destructors should have run
+    assert(Counter::destructions >= Counter::constructions);
+}
+
+// Many operations loop test (stress, sanity)
+{
+    LinkedList<int> a;
+    for (int i=0;i<1000;i++) a.push_back(i);
+    LinkedList<int> b(a);
+    LinkedList<int>::Node* cur = b.head();
+    for (int i=0;i<1000;i++) {assert(cur -> data == i && "iterate and compare"); cur = cur->next;}
+}
+
+
 //push_front / order check
 {
     LinkedList<int> L;
