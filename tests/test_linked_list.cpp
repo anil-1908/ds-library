@@ -219,6 +219,31 @@ int main(){
     assert(L.tail()->data == 77);
 
 }
+//iterators check
+{
+    LinkedList<int> L;
+    for (int i = 1; i <= 5; i++) L.push_back(i);
+
+    int x = 1;
+    for (auto& v : L) {
+        assert(v == x++);
+    }
+}
+
+{
+    const LinkedList<int> L_const = []{
+        LinkedList<int> tmp;
+        tmp.push_back(10);
+        tmp.push_back(20);
+        return tmp;
+    }();
+
+    int x = 10;
+    for (const auto& v : L_const) {
+        assert(v == x);
+        x += 10;
+    }
+}
 
 std::cout << "LinkedList tests passed.\n";
 

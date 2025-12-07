@@ -6,6 +6,7 @@
 #include <memory>
 #include <cstddef>
 #include <utility>
+#include <iterator>
 
 template <typename T>
 class LinkedList{
@@ -15,6 +16,70 @@ struct Node{
     Node* next;
     template <typename... Args>
     Node(Args&&... args) noexcept : data(std::forward<Args>(args)...), next(nullptr) {}
+};
+
+class iterator {
+    friend class const_iterator;
+public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type        = T;
+    using difference_type   = std::ptrdiff_t;
+    using pointer           = T*;
+    using reference         = T&;
+
+    iterator(Node* ptr) : node(ptr) {}
+    iterator(const iterator& it) : node(it.node) {} 
+
+    reference operator*()  const { return node->data; }
+    pointer   operator->() const { return &node->data; }
+
+    iterator& operator++() { node = node->next; return *this; }
+    iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+
+    bool operator==(const iterator& other) const { return node == other.node; }
+    bool operator!=(const iterator& other) const { return node != other.node; }
+
+
+private:
+    Node* node;
+};
+
+
+class const_iterator{
+public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type        = T;
+    using difference_type   = std::ptrdiff_t;
+    using pointer           = const T*;
+    using reference         = const T&;
+
+    const_iterator(const Node* ptr) : node(ptr) {}
+    const_iterator(const iterator& it) : node(it.node) {} 
+
+    reference operator*() const {return node->data;}
+    pointer operator->() const {return &node->data;}
+
+    const_iterator& operator++() { node = node->next; return *this; }
+    const iterator operator++(int) { const_iterator tmp = *this; ++(*this); return tmp; }
+
+    bool operator==(const const_iterator& other) const { return node == other.node; }
+    bool operator!=(const const_iterator& other) const { return node != other.node; }
+
+    friend bool operator==(const iterator& a, const const_iterator& b) noexcept {
+        return a.node == b.node;
+    }
+    friend bool operator==(const const_iterator& a, const iterator& b) noexcept {
+        return a.node == b.node;
+    }
+    friend bool operator!=(const iterator& a, const const_iterator& b) noexcept {
+        return !(a == b);
+    }
+    friend bool operator!=(const const_iterator& a, const iterator& b) noexcept {
+        return !(a == b);
+    }
+
+private:
+    const Node* node;
 };
     
     using size_type = std::size_t;
@@ -181,6 +246,15 @@ struct Node{
         cur -> next = temp;
         ++size_;
     }
+
+  
+    iterator begin() {return iterator(head_);}
+    iterator end()  {return iterator(nullptr);}
+
+    const_iterator begin() const noexcept {return const_iterator(head_);}
+    const_iterator cbegin() const noexcept {return const_iterator(head_);}
+    const_iterator cend() const noexcept {return const_iterator(nullptr);}  
+    const_iterator end()   const noexcept {return const_iterator(nullptr);}   
 
     Node* head() noexcept {return head_;}
     const Node* head() const noexcept { return head_;}
