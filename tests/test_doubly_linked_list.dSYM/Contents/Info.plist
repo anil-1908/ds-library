@@ -5,7 +5,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>English</string>
 		<key>CFBundleIdentifier</key>
-		<string>com.apple.xcode.dsym.test_linked_list</string>
+		<string>com.apple.xcode.dsym.test_doubly_linked_list</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundlePackageType</key>
