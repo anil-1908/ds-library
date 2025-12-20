@@ -96,6 +96,23 @@ public:
 
     }
 
+    void erase_at(size_type index){
+        assert(index < size_ && "Index Out of bounds DoublyLinkedList::erase_at");
+        if(index == 0) {pop_front(); return;}
+        if(index == size_ - 1) {pop_back(); return;}
+        Node* cur = head_;
+        size_type idx = 0;
+        while(idx<index){
+            cur = cur -> next;
+            idx++;
+        }
+        Node* previous_node   = cur -> prev;
+        Node* next_node       = cur -> next;
+        previous_node -> next = next_node;
+        next_node -> prev     = previous_node;
+        delete cur;
+        --size_;
+    }
 private:
 
     Node* head_;

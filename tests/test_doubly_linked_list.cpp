@@ -32,6 +32,33 @@ int main(){
     // assert(L.size() == 0);
     // assert(L.head() == nullptr && L.tail() == nullptr);
 
+    //erase_at function tests
+    {
+        DoublyLinkedList<int> L;
+        for(int i = 0; i < 10; ++i){
+            L.push_back(i);
+        }
+        L.erase_at(0);
+        assert(L.size() == 9);
+        assert(L.head() -> data == 1);
+        
+        L.erase_at(8);
+        assert(L.size() == 8);
+        assert(L.tail() -> data == 8);
+
+        L.erase_at(2);
+        assert(L.size() == 7);
+        DoublyLinkedList<int>::Node* cur = L.head();
+        int idx = 0;
+        while(idx < 2){
+            cur = cur -> next;
+            idx++;
+        }
+        assert(cur -> data = 4);
+        // L.erase_at(7);
+
+    }
+
     std::cout << "DoublyLinkedList tests passed.\n";
     return 0;
 }
