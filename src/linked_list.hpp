@@ -15,7 +15,7 @@ struct Node{
     T data;
     Node* next;
     template <typename... Args>
-    Node(Args&&... args) noexcept : data(std::forward<Args>(args)...), next(nullptr) {}
+    Node(Args&&... args) : data(std::forward<Args>(args)...), next(nullptr) {}
 };
 
 class iterator {
@@ -60,7 +60,7 @@ public:
     pointer operator->() const {return &node->data;}
 
     const_iterator& operator++() { node = node->next; return *this; }
-    const iterator operator++(int) { const_iterator tmp = *this; ++(*this); return tmp; }
+    const_iterator operator++(int) { const_iterator tmp = *this; ++(*this); return tmp; }
 
     bool operator==(const const_iterator& other) const { return node == other.node; }
     bool operator!=(const const_iterator& other) const { return node != other.node; }
@@ -214,7 +214,7 @@ private:
 
         while(cur_index < index-1){
             cur = cur -> next;
-            index++;
+            cur_index++;
         }
 
         Node* temp = new Node(value);
