@@ -26,7 +26,7 @@ public:
     Node* tail() noexcept {return tail_;}
 
     DoublyLinkedList(const DoublyLinkedList&) = delete;
-    DoublyLinkedList operator=(const DoublyLinkedList&) = delete;
+    DoublyLinkedList& operator=(const DoublyLinkedList&) = delete;
 
     void push_back(const T& value){
         Node* temp = new Node(value);
