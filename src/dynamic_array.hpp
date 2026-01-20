@@ -197,45 +197,51 @@ public:
     }
 
     //lvalue
-    void insert(size_type index, const T& value){
-        assert(index <= size_ && "Index out of bound");
-        ensure_capacity_for_push();
-        for(size_type i = size_ ;i > index; --i){
-            alloc_.construct(data_ + i, std::move_if_noexcept(data_[i-1]));
-            alloc_.destroy(data_+ (i - 1));
-        }
-        alloc_.construct(data_+index, value);
-        ++size_;
-    }
-
-    //rvalue
   void insert(size_type index, const T& value) {
     assert(index <= size_);
     ensure_capacity_for_push();
-
     // Case 1: inserting at the end → just push_back
     if (index == size_) {
         alloc_.construct(data_ + size_, value);
         ++size_;
         return;
     }
-
     // Step 1: construct one new element at the end (raw memory)
     alloc_.construct(
         data_ + size_,
         std::move_if_noexcept(data_[size_ - 1])
     );
-
     // Step 2: shift elements right via move-assignment
     for (size_type i = size_ - 1; i > index; --i) {
         data_[i] = std::move_if_noexcept(data_[i - 1]);
     }
-
     // Step 3: assign inserted value
     data_[index] = value;
-
     ++size_;
    }
+
+   //rvalue
+   void insert(size_type index, T &&value)
+   {
+       assert(index <= size_);
+       ensure_capacity_for_push();
+
+       if (index == size_)
+       {
+           alloc_.construct(data_ + size_, std::move(value));
+           ++size_;
+           return;
+       }
+
+       alloc_.construct(data_ + size_, std::move_if_noexcept(data_[size_ - 1]));
+       for (size_type i = size_ - 1; i > index; --i)
+       {
+           data_[i] = std::move_if_noexcept(data_[i - 1]);
+       }
+       data_[index] = std::move(value);
+       ++size_;
+   }
+
     // shrink-to-policy: when size_ <= capacity_/4, shrink to max(1, size_*2)
     void maybe_shrink(){
         if (capacity_ == 0) return;              // nothing to do
